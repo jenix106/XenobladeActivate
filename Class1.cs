@@ -28,7 +28,38 @@ namespace XenobladeActivate
             item = GetComponent<Item>();
             _animation = item.GetComponentInChildren<Animation>();
             item.OnHeldActionEvent += Item_OnHeldActionEvent;
+            item.OnGrabEvent += Item_OnGrabEvent;
+            item.OnSnapEvent += Item_OnSnapEvent;
             Deactivate();
+        }
+
+        private void Item_OnSnapEvent(Holder holder)
+        {
+            Deactivate();
+        }
+
+        private void Item_OnGrabEvent(Handle handle, RagdollHand ragdollHand)
+        {
+            if(ragdollHand.creature != Player.local.creature)
+            {
+                ToggleActivate(); 
+                if (active)
+                {
+                    if (item.gameObject.transform.Find("ActiveHandle"))
+                    {
+                        handle.Release();
+                        ragdollHand.Grab(item.gameObject.transform.Find("ActiveHandle").GetComponent<Handle>());
+                    }
+                }
+                else if (!active)
+                {
+                    if (item.gameObject.transform.Find("DeactiveHandle"))
+                    {
+                        handle.Release();
+                        ragdollHand.Grab(item.gameObject.transform.Find("DeactiveHandle").GetComponent<Handle>());
+                    }
+                }
+            }
         }
 
         private void Item_OnHeldActionEvent(RagdollHand ragdollHand, Handle handle, Interactable.Action action)
@@ -52,13 +83,6 @@ namespace XenobladeActivate
                         ragdollHand.Grab(item.gameObject.transform.Find("DeactiveHandle").GetComponent<Handle>());
                     }
                 }
-            }
-        }
-        public void FixedUpdate()
-        {
-            if (item.holder == active)
-            {
-                Deactivate();
             }
         }
         public void ToggleActivate()
