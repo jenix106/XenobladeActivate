@@ -64,7 +64,7 @@ namespace XenobladeActivate
 
         private void Item_OnHeldActionEvent(RagdollHand ragdollHand, Handle handle, Interactable.Action action)
         {
-            if (!animating && action == Interactable.Action.UseStart)
+            if (!animating && ((action == Interactable.Action.UseStart && ragdollHand.playerHand.controlHand.alternateUsePressed) || (action == Interactable.Action.AlternateUseStart && ragdollHand.playerHand.controlHand.usePressed)))
             {
                 ToggleActivate();
                 if (active)
